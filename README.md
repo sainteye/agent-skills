@@ -6,6 +6,7 @@ with a `SKILL.md` entry point, plus whatever scripts, templates and examples it 
 | Skill | What it does |
 |---|---|
 | [motion-reel](skills/motion-reel/SKILL.md) | Polished motion-graphics videos made entirely in code: Canvas timeline, sub-frame motion blur, ffmpeg export and a synthesized soundtrack. |
+| [showreel](skills/showreel/SKILL.md) | One open creative prompt and no template: the agent designs an original motion-graphics film its own way. |
 
 ## motion-reel
 
@@ -41,6 +42,7 @@ APIs.
 給 Claude Code、Codex 等 coding agent 使用的 Skill 集合。每個 Skill 是 `skills/` 底下的一個資料夾，
 入口是 `SKILL.md`。
 
+- **showreel**：只給一段開放式的原始指令、不套模板，讓 AI 自己決定影片的概念、風格與做法，每支都不一樣。
 - **motion-reel**：完全用程式製作動態圖像影片。以 Canvas 時間軸逐格渲染，每格多次取樣做出動態模糊，
   用 ffmpeg 輸出，配樂也在同一條時間軸上用程式合成。示範影片是 30 秒的 Clawdline 介紹片。
 

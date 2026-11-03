@@ -125,3 +125,6 @@ It is kept here verbatim on purpose. Its open framing (a showreel that must impr
 pushed toward ambitious craft rather than a safe explainer. When a repository or subject responds
 better to that framing, reuse the prompt and replace only the topic, then follow the workflow
 above for the checks and the delivery.
+
+For a film that should not share this skill's look at all, use the `showreel` skill, which
+gives the agent only this prompt and no template.
