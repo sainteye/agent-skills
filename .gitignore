@@ -1,0 +1,9 @@
+node_modules/
+.DS_Store
+skills/*/template/audio.wav
+skills/*/template/film.mp4
+skills/*/template/film.video-only.mp4
+skills/*/template/sheet.png
+skills/*/examples/*/audio.wav
+stills/
+__pycache__/

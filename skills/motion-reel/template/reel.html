@@ -1,0 +1,68 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Reel template</title>
+<style>html,body{margin:0;background:#000}canvas{display:block}</style></head>
+<body><canvas></canvas>
+<script src="../engine/reel-engine.js"></script>
+<script>
+/*
+ * A 10-second starter that shows the core moves. Replace the scenes, keep the shape:
+ *   - every scene is a function of absolute time t, guarded by its own window;
+ *   - each element has an entrance time and an easing curve;
+ *   - cuts land on beats (120 BPM -> one beat every 0.5 s), so audio.py can hit them.
+ */
+const C = { bg: '#0b0a09', ink: '#f3ede4', dim: '#8a837b', accent: '#d97757', line: '#4ccb7f', panel: '#151311', edge: '#2e2a26' };
+
+/* Scene 1 (0–2.5 s): kinetic headline, words rise out of a mask */
+function S1(t) {
+  if (t >= 2.6) return;
+  words('Make something', W / 2, 500, t, 0.3, { s: 120, w: 800, al: 'center', ls: -3, t1: 2.15 });
+  words('that moves.', W / 2, 630, t, 0.5, { s: 120, w: 800, al: 'center', ls: -3, c: C.accent, t1: 2.2 });
+}
+
+/* Scene 2 (2.5–6 s): a glowing line, then squares fly in and assemble on it */
+const GRID = [[0, 1], [1, 1], [2, 1], [3, 1], [1, 0], [2, 0], [0, 2], [1, 2], [2, 2], [3, 2]];
+function S2(t) {
+  if (t < 2.5 || t >= 6.2) return;
+  const out = E.inExpo(P(t, 5.7, 6.1)), cell = 70, cx = W / 2, cy = 500;
+  ctx.save(); ctx.globalAlpha = 1 - out; ctx.translate(W / 2, H / 2); ctx.scale(1 + out * 0.4, 1 + out * 0.4); ctx.translate(-W / 2, -H / 2);
+  const g = E.inOutExpo(P(t, 2.5, 2.95));
+  glowLine(cx, cy + 2.3 * cell, lerp(10, W * 0.8, g), 6, t, C.line);
+  let impact = 0;
+  GRID.forEach(([c, r], i) => {
+    const t0 = 3.0 + i * 0.06, p = P(t, t0, t0 + 0.55); if (p <= 0) return;
+    const ang = hh(i, 1) * Math.PI * 2, rad = 1100, e = E.outExpo(p);
+    const tx = cx + (c - 1.5) * cell, ty = cy + (r - 1) * cell;
+    const x = lerp(cx + Math.cos(ang) * rad, tx, e), y = lerp(cy + Math.sin(ang) * rad, ty, e), s = cell * lerp(0.3, 1, spring(p));
+    ctx.save(); ctx.translate(x, y); ctx.rotate((1 - E.outCubic(p)) * (hh(i, 3) - 0.5) * 7); ctx.fillStyle = C.accent; ctx.fillRect(-s / 2, -s / 2, s, s); ctx.restore();
+    const d = t - (t0 + 0.3); if (d > 0 && d < 0.3) impact += 5 * Math.exp(-d * 18);
+  });
+  chars('Assembled.', W / 2, 820, t, 4.1, { s: 64, w: 700, al: 'center' });
+  ctx.restore();
+  if (impact > 0) { const [sx, sy] = shake(t, impact); ctx.translate(sx, sy); }
+}
+
+/* Scene 3 (6–8 s): a UI card pops in with a check that draws itself */
+function S3(t) {
+  if (t < 6.0 || t >= 8.1) return;
+  const pop = E.outBack(P(t, 6.05, 6.5)), out = E.inExpo(P(t, 7.7, 8.0));
+  ctx.save(); ctx.translate(W / 2 - out * 2400, H / 2); ctx.scale(pop, pop);
+  ctx.save(); ctx.shadowColor = 'rgba(0,0,0,.6)'; ctx.shadowBlur = 60; ctx.shadowOffsetY = 30; rr(-360, -140, 720, 280, 22, C.panel); ctx.restore();
+  rr(-360, -140, 720, 280, 22, null, C.edge, 1.5);
+  const cp = P(t, 6.5, 6.9); circ(-250, 0, 46 * E.outBack(cp), C.line); check(-250, 2, 52, C.bg, P(t, 6.6, 7.0), 9);
+  txt('Rendered', -170, -10, { s: 52, w: 800 }); txt('1920×1080 · 60 fps · motion blur', -170, 40, { f: MONO, s: 22, w: 500, c: C.dim });
+  ctx.restore();
+}
+
+/* Scene 4 (8–10 s): end card */
+function S4(t) {
+  if (t < 7.9) return;
+  chars('Your film here', W / 2, 560, t, 8.0, { s: 130, w: 800, al: 'center', ls: -4 });
+  alpha(E.outCubic(P(t, 8.6, 9.0)), () => txt('reel-engine · render.mjs · synth.py', W / 2, 640, { f: MONO, s: 26, w: 500, c: C.dim, al: 'center' }));
+}
+
+Reel.setup({
+  duration: 10, fps: 60, background: C.bg, ink: C.ink,
+  stage(t) { S1(t); S2(t); S3(t); S4(t); },
+  hud(t) { txt(`00:00:${String(Math.floor(t)).padStart(2, '0')}`, W - 60, 58, { f: MONO, s: 15, w: 600, c: C.dim, al: 'right', a: 0.6 }); },
+});
+</script></body></html>

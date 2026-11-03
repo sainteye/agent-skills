@@ -1,0 +1,14 @@
+{
+  "name": "motion-reel",
+  "private": true,
+  "type": "module",
+  "description": "Deterministic code-driven motion graphics: Canvas timeline, sub-frame motion blur, ffmpeg export, synthesized soundtrack.",
+  "license": "MIT",
+  "scripts": {
+    "sheet": "node engine/render.mjs template/reel.html sheet 0.8 1.6 3.2 3.6 4.6 6.4 7.2 8.6 9.6 --out template/sheet.png",
+    "film": "python3 -I template/audio.py && node engine/render.mjs template/reel.html video --audio template/audio.wav --out template/film.mp4"
+  },
+  "dependencies": {
+    "playwright-core": "1.52.0"
+  }
+}
